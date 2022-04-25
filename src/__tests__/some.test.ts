@@ -124,6 +124,6 @@ describe('Pitch shifting solutions', () => {
     });
 
     it('Tone.js', () => {
-        Tone;
+        // Tone;
     });
 });
