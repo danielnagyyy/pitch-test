@@ -1,0 +1,46 @@
+node_modules
+
+.env
+
+*.code-workspace
+
+.vscode
+.idea
+.dccache
+.terraform/
+# coverage files
+coverage
+
+dist/
+**/proto/*
+!**/proto/.keep
+.k8s/iot-action-service/requirements.lock
+.k8s/iot-action-service/charts/*.tgz
+
+yarn-error.log
+
+# Helm Charts
+**/charts/*.tgz
+Chart.lock
+requirements.lock
+
+#Airflow
+logs
+
+.DS_Store
+tsconfig.tsbuildinfo
+
+__pycache__
+.pytest_cache
+
+.aws-sam/
+
+generated_config.yml
+
+output.yaml
+
+packages/ninebot-g3-processing/src/test/certs/*/*
+
+# AR testing
+stuff/*
+swagger.json
