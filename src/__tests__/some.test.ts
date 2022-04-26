@@ -92,9 +92,9 @@ function encodeToWav(data: Float32Array[], sampleRate: number) {
 }
 
 describe('Pitch shifting solutions', () => {
-    const directoryPath = '/Users/danielnagy/pitch_processing_test/src/__tests__';
+    const directoryPath = __dirname;
     const resultsDirectory = '/results';
-    const originalFileName = { a: 'beszed.wav', b: 'original.wav', c: 'lala.wav' }.b;
+    const originalFileName = { a: 'beszed.wav', b: 'original.wav', c: 'lala.wav' }.c;
 
     it('pitch-shift & node-wav', () => {
         console.time('a');
@@ -122,6 +122,9 @@ describe('Pitch shifting solutions', () => {
     });
 
     it('Tone.js', async () => {
+        console.time('tone js');
+        
+        console.time('tone js')
 
     });
 });
