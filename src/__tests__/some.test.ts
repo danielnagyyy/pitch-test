@@ -3,7 +3,7 @@ import pitchShift from 'pitch-shift';
 import fs from 'fs';
 import wav from 'node-wav';
 
-import { PitchShift } from 'tone';
+import { Player, PitchShift, Context, Offline } from 'tone';
 
 function modifyVolume(channelData: Float32Array[], volume: number) {
     if (volume < 0) {
@@ -53,8 +53,6 @@ function changeSpeed(soundData: Float32Array[], speed: number): Float32Array[] {
     const numberOfChannels = soundData.length;
     const resultData = new Array<Float32Array>(numberOfChannels);
 
-    const otherWeight = 1 - speed;
-
     while (channelIndex < numberOfChannels) {
         const channelData = soundData[channelIndex];
         const channelDataLength = channelData.length;
@@ -65,10 +63,10 @@ function changeSpeed(soundData: Float32Array[], speed: number): Float32Array[] {
         while (newElementIndex + 1 < channelDataLength) {
             const firstDataIndex = Math.floor(newElementIndex);
             const secondDataIndex = Math.ceil(newElementIndex);
-
+            const ratio = secondDataIndex - newElementIndex;
             const modifiedData =
-                (channelData[firstDataIndex] * speed + channelData[secondDataIndex] * otherWeight) /
-                2;
+                channelData[firstDataIndex] +
+                (channelData[secondDataIndex] - channelData[firstDataIndex]) * ratio;
 
             modifiedChannelData.push(modifiedData);
             dataIndex++;
@@ -94,36 +92,36 @@ function encodeToWav(data: Float32Array[], sampleRate: number) {
 }
 
 describe('Pitch shifting solutions', () => {
-    it('pitch-shift & node-wav', () => {
-        const directoryPath = '/Users/danielnagy/pitch_processing_test/src/__tests__';
-        const resultsDirectory = '/results';
-        const originalFileName = { a: 'beszed.wav', b: 'original.wav', c: 'lala.wav' }.c;
+    const directoryPath = '/Users/danielnagy/pitch_processing_test/src/__tests__';
+    const resultsDirectory = '/results';
+    const originalFileName = { a: 'beszed.wav', b: 'original.wav', c: 'lala.wav' }.b;
 
-        let buffer = fs.readFileSync(`${directoryPath}/${originalFileName}`);
+    it('pitch-shift & node-wav', () => {
         console.time('a');
+        let buffer = fs.readFileSync(`${directoryPath}/${originalFileName}`);
         let result = wav.decode(buffer);
 
-        // const channelDataWithModifiedVolume = modifyVolume(result.channelData, 5);
-        // const channelDataWithIncreasedSpeed = changeSpeed(result.channelData, 1.1);
-        // const channelDataWithDecreasedSpeed = changeSpeed(result.channelData, 0.9);
+        const channelDataWithModifiedVolume = modifyVolume(result.channelData, 5);
+        const channelDataWithIncreasedSpeed = changeSpeed(result.channelData, 1.1);
+        const channelDataWithDecreasedSpeed = changeSpeed(result.channelData, 0.9);
 
         const channelDataWithChangedPitch = changePitch(result.channelData, 0.7, result.sampleRate);
 
-        // const modifiedVolumeBuffer = encodeToWav(channelDataWithModifiedVolume, result.sampleRate);
-        // const increasedSpeed = encodeToWav(channelDataWithIncreasedSpeed, result.sampleRate);
-        // const decreasedSpeed = encodeToWav(channelDataWithDecreasedSpeed, result.sampleRate);
+        const modifiedVolumeBuffer = encodeToWav(channelDataWithModifiedVolume, result.sampleRate);
+        const increasedSpeed = encodeToWav(channelDataWithIncreasedSpeed, result.sampleRate);
+        const decreasedSpeed = encodeToWav(channelDataWithDecreasedSpeed, result.sampleRate);
         const pitchChanged = encodeToWav(channelDataWithChangedPitch, result.sampleRate);
-        // saveDataToFile(
-        //     `${directoryPath}${resultsDirectory}/volumeChange.wav`,
-        //     modifiedVolumeBuffer,
-        // );
-        // saveDataToFile(`${directoryPath}${resultsDirectory}/increasedSpeed.wav`, increasedSpeed);
-        // saveDataToFile(`${directoryPath}${resultsDirectory}/decreasedSpeed.wav`, decreasedSpeed);
+        saveDataToFile(
+            `${directoryPath}${resultsDirectory}/volumeChange.wav`,
+            modifiedVolumeBuffer,
+        );
+        saveDataToFile(`${directoryPath}${resultsDirectory}/increasedSpeed.wav`, increasedSpeed);
+        saveDataToFile(`${directoryPath}${resultsDirectory}/decreasedSpeed.wav`, decreasedSpeed);
         saveDataToFile(`${directoryPath}${resultsDirectory}/pitchChanged.wav`, pitchChanged);
         console.timeEnd('a');
     });
 
-    it('Tone.js', () => {
-        // Tone;
+    it('Tone.js', async () => {
+
     });
 });
